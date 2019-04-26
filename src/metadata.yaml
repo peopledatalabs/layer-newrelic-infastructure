@@ -1,4 +1,5 @@
-name: layer-newrelic-infastructure
+---
+name: newrelic-infra
 summary: New Relic infastructure agent subordinate charm
 maintainer: rr_pdl <ryan.redman@peopledatalabs.com>
 description: |
