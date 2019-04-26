@@ -1,0 +1,20 @@
+"includes":
+- "layer:options"
+- "layer:basic"
+- "layer:status"
+- "layer:apt"
+"options":
+  "basic":
+    "use_venv": !!bool "true"
+    "packages": []
+    "python_packages": []
+    "include_system_packages": !!bool "true"
+  "status":
+    "patch-hookenv": !!bool "true"
+  "layer-newrelic-infastructure": {}
+  "apt":
+    "keys": []
+    "packages": []
+    "full_version": !!bool "false"
+    "version_package": ""
+"is": "layer-newrelic-infastructure"

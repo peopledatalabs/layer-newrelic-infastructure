@@ -1,0 +1,16 @@
+"name": "layer-newrelic-infastructure"
+"summary": "New Relic infastructure agent subordinate charm"
+"maintainer": "rr_pdl <ryan.redman@peopledatalabs.com>"
+"description": |
+  New Relic infastructure agent subordinate charm
+"tags":
+- "misc"
+- "analytics"
+- "ops"
+- "monitoring"
+- "performance"
+"requires":
+  "general-info":
+    "interface": "juju-info"
+    "scope": "container"
+"subordinate": !!bool "true"
