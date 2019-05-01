@@ -1,4 +1,3 @@
----
 name: newrelic-infra
 summary: New Relic infrastructure agent subordinate charm
 maintainer: rr_pdl <ryan.redman@peopledatalabs.com>

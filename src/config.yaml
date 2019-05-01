@@ -1,9 +1,8 @@
----
 options:
   license_key:
     type: string
     default: ""
-    description: "New Relic Liscense Key"
+    description: "New Relic License Key"
   install_sources:
     type: string
     default: 'deb [arch=amd64] http://download.newrelic.com/infrastructure_agent/linux/apt bionic main'
