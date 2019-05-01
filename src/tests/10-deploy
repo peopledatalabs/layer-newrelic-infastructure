@@ -9,13 +9,13 @@ class TestCharm(unittest.TestCase):
     def setUp(self):
         self.d = amulet.Deployment()
 
-        self.d.add('layer-newrelic-infrastructure')
-        self.d.expose('layer-newrelic-infrastructure')
+        self.d.add('layer-newrelic-infra')
+        self.d.expose('layer-newrelic-infra')
 
         self.d.setup(timeout=900)
         self.d.sentry.wait()
 
-        self.unit = self.d.sentry['layer-newrelic-infrastructure'][0]
+        self.unit = self.d.sentry['layer-newrelic-infra'][0]
 
     def test_service(self):
         # test we can access over http

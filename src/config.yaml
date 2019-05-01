@@ -44,3 +44,11 @@ options:
   extra_packages:
     type: string
     default: 'newrelic-infra'
+  include_nri_elasticsearch:
+    type: boolean
+    default: false
+    description: "New Relic Elasticsearch Integration"
+  include_nri_redis:
+    type: boolean
+    default: false
+    description: "New Relic Redis Integration"
