@@ -11,15 +11,20 @@ from charmhelpers.core.hookenv import (
     status_set,
 )
 
+from charmhelpers.core.host import (
+    service_restart,
+)
+
 import charms.apt
-import os
 import shutil
 
 
-@when_any('config.changed', 'apt.installed.newrelic-infra')
+@when_any('config.changed')
 def configure_agent():
-    status_set('waiting', "Initializing New Relic Infrastructure Agent")
-    set_flag('layer-newrelic-infra.license_key.update')
+    clear_flag('newrelic-infra.ready')
+    status_set('waiting', "Configuring New Relic Infrastructure Agent")
+
+    set_flag('newrelic-infra.license_key.update')
 
     if config('include_nri_elasticsearch'):
         set_flag('nri_elasticsearch.included')
@@ -40,6 +45,9 @@ def set_license_key():
         newrelic_infra_yml = open("/etc/newrelic-infra.yml", "w")
         newrelic_infra_yml.write("license_key: " + config('license_key'))
 
+        clear_flag('newrelic-infra.license_key.update')
+        set_flag('newrelic-infra.ready')
+
 
 @when('nri_elasticsearch.included')
 @when_not('apt.installed.nri-elasticsearch')
@@ -49,10 +57,13 @@ def install_nri_elasticsearch():
 
 
 @when('apt.installed.nri-elasticsearch')
+@when_not('nri-elasticsearch.configured')
 def configure_nri_elasticsearch():
     status_set('waiting', "Configuring nri-elasticsearch")
-    os.chdir('/etc/newrelic-infra/integrations.d')
-    shutil.copyfile('elasticsearch-config.yml.sample', 'elasticsearch-config.yml')
+    shutil.copyfile('/etc/newrelic-infra/integrations.d/elasticsearch-config.yml.sample',
+                    '/etc/newrelic-infra/integrations.d/elasticsearch-config.yml')
+    set_flag('nri-elasticsearch.configured')
+    set_flag('newrelic-infra.ready')
 
 
 @when('nri_redis.included')
@@ -63,7 +74,16 @@ def install_nri_redis():
 
 
 @when('apt.installed.nri-redis')
+@when_not('nri-redis.configured')
 def configure_nri_redis():
     status_set('waiting', "Configuring nri-redis")
-    os.chdir('/etc/newrelic-infra/integrations.d')
-    shutil.copyfile('redis-config.yml.sample', 'redis-config.yml')
+    shutil.copyfile('/etc/newrelic-infra/integrations.d/redis-config.yml.sample',
+                    '/etc/newrelic-infra/integrations.d/redis-config.yml')
+    set_flag('nri-redis.configured')
+    set_flag('newrelic-infra.ready')
+
+
+@when('newrelic-infra.ready')
+def newrelic_infra_ready():
+    service_restart('newrelic-infra')
+    status_set('active', "New Relic Infrastructure Agent Ready")
