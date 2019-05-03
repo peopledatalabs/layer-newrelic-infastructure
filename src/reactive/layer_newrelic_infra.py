@@ -16,6 +16,10 @@ from charmhelpers.core.host import (
     service_restart,
 )
 
+from charmhelpers.core.templating import (
+    render
+)
+
 import charms.apt
 import shutil
 import os
@@ -29,16 +33,19 @@ def newrelic_infra_ready():
 
 @when_any('config.changed')
 def configure_agent():
-    clear_flag('newrelic-infra.ready')
     status_set('waiting', "Configuring New Relic Infrastructure Agent")
+
+    clear_flag('newrelic-infra.ready')
 
     set_flag('newrelic-infra.license_key.update')
 
+    clear_flag('nri-elasticsearch.configured')
     if config('include_nri_elasticsearch'):
         set_flag('nri_elasticsearch.included')
     else:
         clear_flag('nri_elasticsearch.included')
 
+    clear_flag('nri-redis.configured')
     if config('include_nri_redis'):
         set_flag('nri_redis.included')
     else:
@@ -82,8 +89,14 @@ def remove_nri_elasticsearch():
 @when_not('nri-elasticsearch.configured')
 def configure_nri_elasticsearch():
     status_set('waiting', "Configuring nri-elasticsearch")
-    shutil.copyfile('/etc/newrelic-infra/integrations.d/elasticsearch-config.yml.sample',
-                    '/etc/newrelic-infra/integrations.d/elasticsearch-config.yml')
+
+    if config('nri_elasticsearch_config'):
+        render(source=config('nri_elasticsearch_config'),
+               target='/etc/newrelic-infra/integrations.d/elasticsearch-config.yml', 
+               context={})
+    else:
+        shutil.copyfile('/etc/newrelic-infra/integrations.d/elasticsearch-config.yml.sample',
+                        '/etc/newrelic-infra/integrations.d/elasticsearch-config.yml')
     set_flag('nri-elasticsearch.configured')
     set_flag('newrelic-infra.ready')
 
@@ -108,8 +121,14 @@ def remove_nri_redis():
 @when_not('nri-redis.configured')
 def configure_nri_redis():
     status_set('waiting', "Configuring nri-redis")
-    shutil.copyfile('/etc/newrelic-infra/integrations.d/redis-config.yml.sample',
-                    '/etc/newrelic-infra/integrations.d/redis-config.yml')
+
+    if config('nri_redis_config'):
+        render(source=config('nri_redis_config'),
+               target='/etc/newrelic-infra/integrations.d/redis-config.yml', 
+               context={})
+    else:
+        shutil.copyfile('/etc/newrelic-infra/integrations.d/redis-config.yml.sample',
+                        '/etc/newrelic-infra/integrations.d/redis-config.yml')
     set_flag('nri-redis.configured')
     set_flag('newrelic-infra.ready')
 
@@ -129,5 +148,3 @@ def remove_newrelic_infra():
 
     clear_flag('nri_redis.included')
     charms.apt.purge(['nri-redis'])
-
-   

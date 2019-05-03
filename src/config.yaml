@@ -48,7 +48,15 @@ options:
     type: boolean
     default: false
     description: "New Relic Elasticsearch Integration"
+  nri_elasticsearch_config:
+    type: string
+    default: ""
+    description: "Absolute path for nri-elasticsearch config yaml. Default used if blank."
   include_nri_redis:
     type: boolean
     default: false
     description: "New Relic Redis Integration"
+  nri_elasticsearch_config:
+    type: string
+    default: ""
+    description: "Absolute path for nri-redis config yaml. Default used if blank."
